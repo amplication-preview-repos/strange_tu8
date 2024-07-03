@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Course {
+  createdAt     DateTime     @default(now())
+  createdBy     String?
+  description   String?
+  id            String       @id @default(cuid())
+  landingPage   LandingPage? @relation(fields: [landingPageId], references: [id])
+  landingPageId String?
+  mediaItems    Media[]
+  name          String?
+  updatedAt     DateTime     @updatedAt
+}
+
+model Media {
+  course    Course?             @relation(fields: [courseId], references: [id])
+  courseId  String?
+  createdAt DateTime            @default(now())
+  id        String              @id @default(cuid())
+  typeField EnumMediaTypeField?
+  updatedAt DateTime            @updatedAt
+  url       String?
+}
+
+model LandingPage {
+  courses   Course[]
+  createdAt DateTime @default(now())
+  createdBy String?
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  url       String?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumMediaTypeField {
+  Option1
+}
